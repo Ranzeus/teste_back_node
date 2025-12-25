@@ -5,14 +5,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   async login(req: Request, res: Response): Promise<Response> {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ error: "username and password are required" });
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const result = await this.authService.login({ username, password });
+    const token = await this.authService.login(email, password);
 
-    return res.status(200).json(result);
+    return res.json({ accessToken: token });
   }
 }
