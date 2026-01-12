@@ -1,13 +1,13 @@
 import { Request, Response, Router } from "express";
 import { BookController } from "./book.controller";
 import { BookService } from "./book.service";
-import { BookRepositoryMock } from "./book.repository.mock";
+import { BookRepositoryPostgres } from "./book.repository.pg";
 import { authMiddleware } from "../shared/middlewares/auth.middleware";
 
 const router = Router();
 
 // wiring (injeção manual)
-const bookRepository = new BookRepositoryMock();
+const bookRepository = new BookRepositoryPostgres();
 const bookService = new BookService(bookRepository);
 const bookController = new BookController(bookService);
 
