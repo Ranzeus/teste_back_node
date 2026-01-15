@@ -16,8 +16,12 @@ VALUES (
 CREATE TABLE IF NOT EXISTS books (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
+  author VARCHAR(255),
+  published_at VARCHAR(255),
   is_rented BOOLEAN DEFAULT false
 );
 
-INSERT INTO books (title)
-VALUES ('Clean Code'), ('Domain-Driven Design');
+INSERT INTO books (title, author, published_at, is_rented)
+VALUES 
+  ('Clean Code', 'Robert C. Martin', '2008-08-11', false),
+  ('Domain-Driven Design', 'Eric Evans', '2003-08-30', false);
