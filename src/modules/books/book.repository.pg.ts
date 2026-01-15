@@ -26,6 +26,53 @@ export class BookRepositoryPostgres implements BookRepository {
     );
   }
 
+  async create(data: CreateBookDTO): Promise<Book> {
+    const result = await postgresPool.query(
+      "INSERT INTO books (title, author, published_at, is_rented) VALUES ($1, $2, $3, $4) RETURNING id, title, author, published_at, is_rented",
+      [
+        data.title,
+        data.author,
+        data.publishedAt || null,
+        data.isRented || false
+      ]
+    );
+
+    return {
+      id: result.rows[0].id,
+      title: result.rows[0].title,
+      author: result.rows[0].author,
+      publishedAt: result.rows[0].published_at,
+      isRented: result.rows[0].is_rented,
+    };
+  }
+
+  async update(id: number, data: UpdateBookDTO): Promise<void> {
+    const updates: string[] = [];
+    const values: (string | number)[] = [];
+    let paramCount = 1;
+
+    if (data.title !== undefined) {
+      updates.push(`title = $${paramCount++}`);
+      values.push(data.title);
+    }
+
+    if (data.author !== undefined) {
+      updates.push(`author = $${paramCount++}`);
+      values.push(data.author);
+    }
+
+    if (updates.length === 0) return;
+
+    values.push(id);
+    const query = `UPDATE books SET ${updates.join(", ")} WHERE id = $${paramCount}`;
+
+    await postgresPool.query(query, values);
+  }
+
+  async delete(id: number): Promise<void> {
+    await postgresPool.query("DELETE FROM books WHERE id = $1", [id]);
+  }
+
   // MOCK IMPLEMENTATIONS FOR OTHER METHODS
 
   private books: Book[] = [
@@ -41,25 +88,4 @@ export class BookRepositoryPostgres implements BookRepository {
     return this.books;
   }
 
-  async create(data: CreateBookDTO): Promise<Book> {
-    const newBook: Book = {
-      id: this.books.length + 1,
-      ...data,
-      isRented: false
-    };
-
-    this.books.push(newBook);
-    return newBook;
-  }
-
-  async update(id: number, data: UpdateBookDTO): Promise<void> {
-    const book = await this.findById(id);
-    if (!book) return;
-
-    Object.assign(book, data);
-  }
-
-  async delete(id: number): Promise<void> {
-    this.books = this.books.filter(book => book.id !== id);
-  }
 }
