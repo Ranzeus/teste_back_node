@@ -46,7 +46,7 @@ export class BookRepositoryPostgres implements BookRepository {
     };
   }
 
-  async update(id: number, data: UpdateBookDTO): Promise<void> {
+  async update(data: UpdateBookDTO): Promise<void> {
     const updates: string[] = [];
     const values: (string | number)[] = [];
     let paramCount = 1;
@@ -63,7 +63,7 @@ export class BookRepositoryPostgres implements BookRepository {
 
     if (updates.length === 0) return;
 
-    values.push(id);
+    values.push(data.id!);
     const query = `UPDATE books SET ${updates.join(", ")} WHERE id = $${paramCount}`;
 
     await postgresPool.query(query, values);

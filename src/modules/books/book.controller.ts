@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BookService } from "./book.service";
-import { CreateBookDTO } from "./book.dto";
+import { CreateBookDTO, UpdateBookDTO } from "./book.dto";
 
 export class BookController {
   constructor(private readonly bookService: BookService) { }
@@ -48,6 +48,19 @@ export class BookController {
       return res.status(200).json({
         message: "Book deleted successfully",
         bookId
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return res.status(400).json({ error: message });
+    }
+  }
+
+  async update(req: Request<{}, {}, UpdateBookDTO>,res: Response): Promise<Response> {
+    
+    try {
+      const response = await this.bookService.updateBook(req.body);
+      return res.status(201).json({
+        message: response
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);

@@ -3,7 +3,7 @@ import { BookController } from "./book.controller";
 import { BookService } from "./book.service";
 import { BookRepositoryPostgres } from "./book.repository.pg";
 import { authMiddleware } from "../shared/middlewares/auth.middleware";
-import { CreateBookDTO } from "./book.dto";
+import { CreateBookDTO, UpdateBookDTO } from "./book.dto";
 
 const router = Router();
 
@@ -29,6 +29,12 @@ router.delete(
     "/:id/delete", 
     authMiddleware, 
     (req: Request<{ id: string }>, res: Response) => bookController.delete(req, res)
+);
+
+router.post(
+    "/update", 
+    authMiddleware, 
+    (req: Request<{}, {}, UpdateBookDTO>, res: Response) => bookController.update(req, res)
 );
 
 export { router as bookRoutes };
