@@ -6,6 +6,9 @@ export interface CreateBookDTO {
 }
 
 export interface UpdateBookDTO {
-  title?: string;
-  author?: string;
+  id: number;
+  title: string;
+  author: string;
+  publishedAt?: string;
+  isRented?: boolean;
 }

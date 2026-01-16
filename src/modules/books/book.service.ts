@@ -1,4 +1,4 @@
-import { CreateBookDTO } from "./book.dto";
+import { CreateBookDTO, UpdateBookDTO } from "./book.dto";
 import { BookRepository } from "./book.repository";
 
 export class BookService {
@@ -61,5 +61,25 @@ export class BookService {
       bookId,
       rented: true
     };
+  }
+
+  async updateBook(bookDTO: UpdateBookDTO): Promise<{ msg: string }> {
+    
+    try {
+
+      if (!bookDTO.title || !bookDTO.author) {
+        throw new Error("title and author are required");
+      }
+
+      const book = await this.bookRepository.update(bookDTO);
+
+      return {
+        msg: "Book updated successfully"
+      };
+
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error("Problens to Register Book: " + message);
+    }
   }
 }
